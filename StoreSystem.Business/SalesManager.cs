@@ -81,7 +81,6 @@ public class SalesManager
             .ToListAsync();
     }
 
-    // ProfitLossReport
     public async Task<decimal> GetTotalSales(DateTime fromDate, DateTime toDate)
     {
         return await _dbContext.Sales
@@ -120,7 +119,6 @@ public class SalesManager
             })
             .ToListAsync();
 
-        // if both same count
         for (int i = 0; i < currentReport.Count; i++)
         {
             currentReport[i].ProfitLoss -= previousReport[i].ProfitLoss;
@@ -129,7 +127,6 @@ public class SalesManager
         return currentReport;
     }
 
-    // MonthlySalesReport
     public async Task<List<MonthlySalesReportItem>> GetMonthlySalesReportAsync(DateTime fromDate, DateTime toDate)
     {
         return await _dbContext.Sales
@@ -179,34 +176,29 @@ public class SalesManager
     {
         var currentDate = DateTime.UtcNow;
 
-        // Get the minimum price from the ongoing sales
-        var ongoingSalesPrice = await _dbContext.Sales
+        var livePrice = await _dbContext.Sales
             .Where(s => s.MobileId == mobileId && s.Date <= currentDate)
             .OrderBy(s => s.Total)
             .Select(s => s.Total)
             .FirstOrDefaultAsync();
 
-        // Get the minimum price from the previous sales
-        var previousSalesPrice = await _dbContext.Sales
+        var oldPrice = await _dbContext.Sales
             .Where(s => s.MobileId == mobileId && s.Date < currentDate)
             .OrderBy(s => s.Total)
             .Select(s => s.Total)
             .FirstOrDefaultAsync();
 
-        // If there are no ongoing sales, consider only the previous sales
-        if (ongoingSalesPrice == 0)
+        if (livePrice == 0)
         {
-            return previousSalesPrice;
+            return oldPrice;
         }
 
-        // If there are no previous sales, consider only the ongoing sales
-        if (previousSalesPrice == 0)
+        if (oldPrice == 0)
         {
-            return ongoingSalesPrice;
+            return livePrice;
         }
 
-        // Compare ongoing sales price with previous sales price and return the minimum
-        return Math.Min(ongoingSalesPrice, previousSalesPrice);
+        return Math.Min(livePrice, oldPrice);
     }
 
 }

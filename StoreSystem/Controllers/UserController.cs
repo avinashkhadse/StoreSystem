@@ -129,10 +129,8 @@ namespace StoreSystem.Controllers
                 user.Username = updatedUser.Username;
                 user.Role = updatedUser.Role;
 
-                // Check if the newPassword is provided and not empty
                 if (!string.IsNullOrWhiteSpace(newPassword))
                 {
-                    // Hash the new password and update the PasswordHash property
                     user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 }
 
@@ -202,23 +200,9 @@ namespace StoreSystem.Controllers
         {
             try
             {
-                /*var user = await _userManager.LoginAsync(username, password);
-                if (user == null)
-                {
-                    // Login failed, return error response
-                    ReturnJson rJson = new ReturnJson()
-                    {
-                        ResponseCode = "401",
-                        Data = null,
-                        Message = "Invalid credentials",
-                        Status = "false"
-                    };
-                    return Unauthorized(rJson);
-                }*/
                 var user = await _userManager.LoginAsync(username, password);
                 if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
                 {
-                    // Login failed, return error response
                     ReturnJson rJson = new ReturnJson()
                     {
                         ResponseCode = "401",
@@ -229,7 +213,6 @@ namespace StoreSystem.Controllers
                     return Unauthorized(rJson);
                 }
 
-                // Login successful, generate JWT token and return it to the user
                 string token = _userManager.GenerateJwtToken(user);
 
                 ReturnJson returnJson = new ReturnJson()

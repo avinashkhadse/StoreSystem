@@ -54,10 +54,8 @@ namespace StoreSystem.Business
             existingUser.Username = updatedUser.Username;
             existingUser.Role = updatedUser.Role;
 
-            // Check if the newPassword is provided and not empty
             if (!string.IsNullOrWhiteSpace(newPassword))
             {
-                // Hash the new password and update the PasswordHash property
                 existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
             }
 
