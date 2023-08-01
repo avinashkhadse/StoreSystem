@@ -42,6 +42,26 @@ namespace StoreSystem.Controllers
                 return StatusCode(500, returnJson);
             }
         }
+        [HttpGet("BestPrizeByMobileId/{mobileId}")]
+        public async Task<IActionResult> GetBestPriceForMobile(int mobileId)
+        {
+            try
+            {
+                var bestPrice = await _salesManager.GetBestPriceForMobileAsync(mobileId);
+                return Ok(new { MobileId = mobileId, BestPrice = bestPrice });
+            }
+            catch (Exception ex)
+            {
+                ReturnJson returnJson = new ReturnJson()
+                {
+                    ResponseCode = "500",
+                    Data = null,
+                    Message = "Error: " + ex.Message,
+                    Status = "false"
+                };
+                return StatusCode(500, returnJson);
+            }
+        }
     }
 
 }

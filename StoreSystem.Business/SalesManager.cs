@@ -175,4 +175,38 @@ public class SalesManager
 
         return monthlyBrandWiseSalesReport;
     }
+    public async Task<decimal> GetBestPriceForMobileAsync(int mobileId)
+    {
+        var currentDate = DateTime.UtcNow;
+
+        // Get the minimum price from the ongoing sales
+        var ongoingSalesPrice = await _dbContext.Sales
+            .Where(s => s.MobileId == mobileId && s.Date <= currentDate)
+            .OrderBy(s => s.Total)
+            .Select(s => s.Total)
+            .FirstOrDefaultAsync();
+
+        // Get the minimum price from the previous sales
+        var previousSalesPrice = await _dbContext.Sales
+            .Where(s => s.MobileId == mobileId && s.Date < currentDate)
+            .OrderBy(s => s.Total)
+            .Select(s => s.Total)
+            .FirstOrDefaultAsync();
+
+        // If there are no ongoing sales, consider only the previous sales
+        if (ongoingSalesPrice == 0)
+        {
+            return previousSalesPrice;
+        }
+
+        // If there are no previous sales, consider only the ongoing sales
+        if (previousSalesPrice == 0)
+        {
+            return ongoingSalesPrice;
+        }
+
+        // Compare ongoing sales price with previous sales price and return the minimum
+        return Math.Min(ongoingSalesPrice, previousSalesPrice);
+    }
+
 }
