@@ -118,7 +118,7 @@ namespace StoreSystem.Controllers
         [HttpPut("UpdateUser/{id}")]
         //[Authorize(Roles = "Admin")]
         [AllowAnonymous]
-        public async Task<IActionResult> UpdateUser(int id, User updatedUser, string newpassword)
+        public async Task<IActionResult> UpdateUser(int id, User updatedUser, string newPassword = null)
         {
             try
             {
@@ -130,13 +130,14 @@ namespace StoreSystem.Controllers
                 user.Role = updatedUser.Role;
 
                 // Check if the newPassword is provided and not empty
-                if (!string.IsNullOrWhiteSpace(newpassword))
+                if (!string.IsNullOrWhiteSpace(newPassword))
                 {
                     // Hash the new password and update the PasswordHash property
-                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newpassword);
+                    user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
                 }
 
-                var updated = await _userManager.UpdateUserAsync(id, updatedUser);
+                var updated = await _userManager.UpdateUserAsync(id, user);
+
                 ReturnJson returnJson = new ReturnJson()
                 {
                     ResponseCode = "200",
@@ -201,8 +202,21 @@ namespace StoreSystem.Controllers
         {
             try
             {
-                var user = await _userManager.LoginAsync(username, password);
+                /*var user = await _userManager.LoginAsync(username, password);
                 if (user == null)
+                {
+                    // Login failed, return error response
+                    ReturnJson rJson = new ReturnJson()
+                    {
+                        ResponseCode = "401",
+                        Data = null,
+                        Message = "Invalid credentials",
+                        Status = "false"
+                    };
+                    return Unauthorized(rJson);
+                }*/
+                var user = await _userManager.LoginAsync(username, password);
+                if (user == null || !BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
                 {
                     // Login failed, return error response
                     ReturnJson rJson = new ReturnJson()

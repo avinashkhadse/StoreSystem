@@ -45,15 +45,21 @@ namespace StoreSystem.Business
             return await _dbContext.Users.ToListAsync();
         }
 
-        public async Task<User> UpdateUserAsync(int id, User updatedUser)
+        public async Task<User> UpdateUserAsync(int id, User updatedUser, string newPassword = null)
         {
             var existingUser = await _dbContext.Users.FindAsync(id);
             if (existingUser == null)
                 return null;
 
             existingUser.Username = updatedUser.Username;
-            existingUser.PasswordHash = updatedUser.PasswordHash;
             existingUser.Role = updatedUser.Role;
+
+            // Check if the newPassword is provided and not empty
+            if (!string.IsNullOrWhiteSpace(newPassword))
+            {
+                // Hash the new password and update the PasswordHash property
+                existingUser.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+            }
 
             await _dbContext.SaveChangesAsync();
             return existingUser;
@@ -80,7 +86,6 @@ namespace StoreSystem.Business
 
             if (BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
             {
-                
                 return user;
             }
 

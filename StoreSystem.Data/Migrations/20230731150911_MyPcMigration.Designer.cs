@@ -12,7 +12,7 @@ using StoreSystem.Data;
 namespace StoreSystem.Data.Migrations
 {
     [DbContext(typeof(StoreDbContext))]
-    [Migration("20230729100237_MyPcMigration")]
+    [Migration("20230731150911_MyPcMigration")]
     partial class MyPcMigration
     {
         /// <inheritdoc />
@@ -79,7 +79,7 @@ namespace StoreSystem.Data.Migrations
                     b.ToTable("Mobiles");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.MonthlyBrandWiseSalesReport", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.MonthlyBrandWiseSalesReport", b =>
                 {
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
@@ -95,7 +95,7 @@ namespace StoreSystem.Data.Migrations
                     b.ToTable("MonthlyBrandWiseSalesReports");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.MonthlySalesReportItem", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.MonthlySalesReportItem", b =>
                 {
                     b.Property<int>("Month")
                         .HasColumnType("int");
@@ -112,7 +112,7 @@ namespace StoreSystem.Data.Migrations
                     b.ToTable("MonthlySalesReportItems");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.SaleItem", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.SaleItem", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -141,7 +141,7 @@ namespace StoreSystem.Data.Migrations
                     b.ToTable("SaleItems");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.Sales", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.Sales", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -209,7 +209,7 @@ namespace StoreSystem.Data.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.MonthlyBrandWiseSalesReport", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.MonthlyBrandWiseSalesReport", b =>
                 {
                     b.HasOne("StoreSystem.Models.Brand", "Brand")
                         .WithMany()
@@ -220,7 +220,7 @@ namespace StoreSystem.Data.Migrations
                     b.Navigation("Brand");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.SaleItem", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.SaleItem", b =>
                 {
                     b.HasOne("StoreSystem.Models.Mobile", "Mobile")
                         .WithMany("SaleItems")
@@ -228,7 +228,7 @@ namespace StoreSystem.Data.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("StoreSystem.Models.Sales", "Sales")
+                    b.HasOne("StoreSystem.Models.Reports.Sales", "Sales")
                         .WithMany("SaleItems")
                         .HasForeignKey("SalesId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -239,7 +239,7 @@ namespace StoreSystem.Data.Migrations
                     b.Navigation("Sales");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.Sales", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.Sales", b =>
                 {
                     b.HasOne("StoreSystem.Models.Mobile", "Mobile")
                         .WithMany()
@@ -268,7 +268,7 @@ namespace StoreSystem.Data.Migrations
                     b.Navigation("SaleItems");
                 });
 
-            modelBuilder.Entity("StoreSystem.Models.Sales", b =>
+            modelBuilder.Entity("StoreSystem.Models.Reports.Sales", b =>
                 {
                     b.Navigation("SaleItems");
                 });
